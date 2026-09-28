@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>แบบเก็บข้อมูล OPD รพร.เลิงนกทา</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A28;
+    --ink-soft:#4B5C59;
+    --teal:#155048;
+    --teal-deep:#0E3733;
+    --teal-soft:#E4EEEC;
+    --amber:#B9772E;
+    --amber-soft:#F6E9D8;
+    --blue:#2E6DA8;
+    --grey:#6B7A77;
+    --bg:#F5F4EF;
+    --card:#FFFFFF;
+    --line:#DEE3E0;
+    --line-soft:#EDEFEC;
+    --danger:#A83B2E;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Sarabun',system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.55;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:28px 18px 80px;}
+
+  .masthead{border-bottom:3px solid var(--teal);padding-bottom:16px;margin-bottom:22px;}
+  .masthead .eyebrow{color:var(--teal);font-weight:600;font-size:13px;margin-bottom:4px;}
+  .masthead h1{margin:0 0 6px;font-size:22px;font-weight:700;color:var(--teal-deep);}
+  .masthead p{margin:0;color:var(--ink-soft);font-size:13.5px;}
+
+  .metabar{display:flex;flex-wrap:wrap;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:18px;}
+  .field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:140px;}
+  .field label{font-size:13px;font-weight:600;color:var(--ink-soft);}
+  input[type=date], input[type=text], input[type=number], select, textarea{
+    font-family:inherit;font-size:15px;padding:8px 10px;border:1px solid var(--line);
+    border-radius:7px;background:#fff;color:var(--ink);
+  }
+  textarea{width:100%;resize:vertical;min-height:70px;line-height:1.5;}
+  input[type=number]{width:100%;}
+  input:focus, select:focus, textarea:focus{outline:2px solid var(--teal);outline-offset:1px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:18px;overflow:hidden;}
+  .card-head{padding:13px 16px;background:var(--teal-soft);border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:10px;}
+  .card-head.warm{background:var(--amber-soft);}
+  .card-head .num{font-weight:700;color:var(--teal-deep);font-size:14px;min-width:18px;}
+  .card-head.warm .num{color:var(--amber);}
+  .card-head .title{font-weight:600;color:var(--teal-deep);font-size:15px;}
+  .card-head.warm .title{color:#7A4E1E;}
+  .card-body{padding:16px;}
+
+  .row-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-soft);}
+  .row-item:last-child{border-bottom:none;}
+  .row-item .num{font-weight:700;color:var(--teal);font-size:13.5px;min-width:20px;}
+  .row-item .label{flex:1;color:var(--ink);}
+  .color-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle;}
+  .green-dot{background:#2E7D32;}
+  .row-item input[type=number]{width:90px;text-align:center;}
+  #f_greenTriage{border-color:#8FC98F;color:#1B5E20;font-weight:600;background:#F1F9F1;}
+
+  .subsection{padding:14px 0;border-bottom:1px solid var(--line-soft);}
+  .subsection:last-child{border-bottom:none;}
+  .subsection-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .subsection-head .label-group{display:flex;gap:8px;align-items:baseline;}
+  .subsection-head .num{font-weight:700;color:var(--danger);font-size:13.5px;}
+  .subsection-head.other .num{color:var(--blue);}
+  .subsection-head .label{font-weight:600;color:var(--ink);}
+  .subsection-total{font-size:12.5px;color:var(--ink-soft);}
+  .subsection-total strong{color:var(--ink);}
+
+  .dept-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+  .dept-row input[type=text]{flex:1;}
+  .dept-row input[type=number]{width:80px;}
+  .dept-row-adv{flex-wrap:wrap;row-gap:6px;}
+  .dept-row-adv select.dept-select{flex:1;min-width:150px;}
+  .dept-row-adv input.dept-other{flex:1;min-width:120px;}
+  .dept-row-adv input.dept-count{width:70px;flex:0 0 70px;}
+  .dept-row-adv input.dept-note{flex:1.4;min-width:130px;}
+  .dept-row button, .patient-row button{
+    background:none;border:1px solid var(--line);color:var(--danger);border-radius:6px;
+    width:32px;height:32px;cursor:pointer;font-size:15px;line-height:1;flex-shrink:0;
+  }
+  .patient-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+  .patient-row input.hn{width:110px;}
+  .patient-row input.dx{flex:1;}
+
+  .add-row-btn{
+    background:none;border:1px dashed var(--teal);color:var(--teal);border-radius:7px;
+    padding:8px 12px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;margin-top:2px;
+  }
+  .add-row-btn:hover{background:var(--teal-soft);}
+  .add-row-btn.warm{border-color:var(--danger);color:var(--danger);}
+  .add-row-btn.warm:hover{background:#FBEDEA;}
+  .add-row-btn.other{border-color:var(--blue);color:var(--blue);}
+  .add-row-btn.other:hover{background:#E9F1F8;}
+
+  .actions{display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;align-items:center;}
+  .btn{font-family:inherit;font-size:14.5px;font-weight:600;padding:11px 20px;border-radius:8px;border:1px solid transparent;cursor:pointer;}
+  .btn-primary{background:var(--teal);color:#fff;}
+  .btn-primary:hover{background:var(--teal-deep);}
+  .btn-ghost{background:none;border-color:var(--line);color:var(--ink-soft);}
+  .btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+  .save-status{font-size:13px;color:var(--ink-soft);}
+  .save-status.ok{color:var(--teal);}
+
+  .section-title{font-size:16px;font-weight:700;color:var(--teal-deep);margin:34px 0 12px;padding-top:18px;border-top:1px solid var(--line);}
+
+  .summary-bar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:22px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:8px;padding:12px 14px;}
+  .stat.er{border-left-color:var(--danger);}
+  .stat .n{font-size:22px;font-weight:700;color:var(--teal-deep);}
+  .stat.er .n{color:var(--danger);}
+  .stat .l{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:920px;}
+  th, td{padding:9px 10px;text-align:center;border-bottom:1px solid var(--line-soft);white-space:nowrap;}
+  th{background:var(--teal-soft);color:var(--teal-deep);font-weight:600;font-size:12px;}
+  td.date-cell{text-align:left;font-weight:600;color:var(--ink);}
+  td.tot-cell{font-weight:700;color:var(--teal-deep);}
+  td.note-cell{text-align:left;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-soft);}
+  tr:hover td{background:#FAFBFA;}
+  .row-actions{display:flex;gap:6px;justify-content:center;}
+  .icon-btn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 9px;cursor:pointer;font-size:12px;color:var(--ink-soft);font-family:inherit;}
+  .icon-btn:hover{color:var(--teal);border-color:var(--teal);}
+  .icon-btn.del:hover{color:var(--danger);border-color:var(--danger);}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--ink-soft);font-size:14px;}
+
+  .footnote{font-size:12px;color:var(--ink-soft);margin-top:10px;line-height:1.6;}
+
+  .chart-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:22px;}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);cursor:pointer;user-select:none;}
+  .legend-item .swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+  .legend-item.off{opacity:.4;}
+  .legend-item input{margin:0;}
+  #trendChartWrap{width:100%;overflow-x:auto;}
+  #trendChartWrap svg{width:100%;height:auto;min-width:520px;display:block;}
+  .chart-empty{text-align:center;padding:30px;color:var(--ink-soft);font-size:13.5px;}
+
+  @media (max-width:520px){
+    .row-item input[type=number]{width:72px;}
+    .masthead h1{font-size:19px;}
+    .patient-row input.hn{width:88px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="eyebrow">โรงพยาบาลสมเด็จพระยุพราชเลิงนกทา · แผนกผู้ป่วยนอกทั่วไป</div>
+    <h1>แบบเก็บข้อมูลการใช้บริการคลินิกผู้ป่วยนอกทั่วไป</h1>
+    <p>บันทึกข้อมูลประจำวัน — เลือกวันที่แล้วกรอกรายละเอียด ระบบจะบันทึกอัตโนมัติต่อวัน</p>
+  </div>
+
+  <div class="metabar">
+    <div class="field">
+      <label for="recDate">วันที่บันทึก</label>
+      <input type="date" id="recDate">
+    </div>
+    <div class="field">
+      <label for="recShift">เวร</label>
+      <select id="recShift">
+        <option value="">— ไม่ระบุ —</option>
+        <option value="เช้า">เช้า</option>
+        <option value="บ่าย">บ่าย</option>
+        <option value="ดึก">ดึก</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="recBy">ผู้บันทึก</label>
+      <input type="text" id="recBy" placeholder="ชื่อผู้บันทึก (ถ้ามี)">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="num">1</span><span class="title">ยอดคนไข้ใช้บริการ</span></div>
+    <div class="card-body">
+      <div class="row-item">
+        <span class="label">จำนวนผู้ป่วยที่มาใช้บริการทั้งหมด</span>
+        <input type="number" min="0" id="f_total" value="0">
+      </div>
+      <div class="row-item">
+        <span class="label"><span class="color-dot green-dot"></span>ยอดคนไข้สีเขียว (ไม่เร่งด่วน)</span>
+        <input type="number" min="0" id="f_greenTriage" value="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="num">2</span><span class="title">มาผิดนัด ผิดคลินิก (แยกแผนก)</span></div>
+    <div class="card-body">
+      <div id="deptRows2"></div>
+      <button type="button" class="add-row-btn" data-add-dept-select="deptRows2">+ เพิ่มแผนก</button>
+      <div class="subsection-total" style="margin-top:8px;">รวม: <strong id="total_deptRows2">0</strong> ราย</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head warm"><span class="num">3–5</span><span class="title">ส่งต่อห้องฉุกเฉิน (ER) — ระบุ HN และ Dx รายบุคคล</span></div>
+    <div class="card-body">
+      <div class="subsection">
+        <div class="subsection-head">
+          <div class="label-group"><span class="num">3</span><span class="label">ซักประวัติแล้วส่ง ER</span></div>
+          <div class="subsection-total">รวม <strong id="total_patRows3">0</strong> ราย</div>
+        </div>
+        <div id="patRows3"></div>
+        <button type="button" class="add-row-btn warm" data-add-patient="patRows3">+ เพิ่มรายผู้ป่วย</button>
+      </div>
+      <div class="subsection">
+        <div class="subsection-head">
+          <div class="label-group"><span class="num">4</span><span class="label">ตรวจแล้วส่งตรวจต่อ ER</span></div>
+          <div class="subsection-total">รวม <strong id="total_patRows4">0</strong> ราย</div>
+        </div>
+        <div id="patRows4"></div>
+        <button type="button" class="add-row-btn warm" data-add-patient="patRows4">+ เพิ่มรายผู้ป่วย</button>
+      </div>
+      <div class="subsection">
+        <div class="subsection-head">
+          <div class="label-group"><span class="num">5</span><span class="label">ทรุดลงขณะรอที่ OPD ส่งต่อ ER</span></div>
+          <div class="subsection-total">รวม <strong id="total_patRows5">0</strong> ราย</div>
+        </div>
+        <div id="patRows5"></div>
+        <button type="button" class="add-row-btn warm" data-add-patient="patRows5">+ เพิ่มรายผู้ป่วย</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="num">6–8</span><span class="title">ส่งต่อ / รับส่งต่อระหว่างแผนก (แยกแผนก)</span></div>
+    <div class="card-body">
+      <div class="subsection">
+        <div class="subsection-head other">
+          <div class="label-group"><span class="num">6</span><span class="label">รับส่งต่อจากแผนกอื่น</span></div>
+          <div class="subsection-total">รวม <strong id="total_deptRows6">0</strong> ราย</div>
+        </div>
+        <div id="deptRows6"></div>
+        <button type="button" class="add-row-btn other" data-add-dept-select="deptRows6">+ เพิ่มแผนก</button>
+      </div>
+      <div class="subsection">
+        <div class="subsection-head other">
+          <div class="label-group"><span class="num">7</span><span class="label">ซักประวัติแล้วส่งแผนกอื่น</span></div>
+          <div class="subsection-total">รวม <strong id="total_deptRows7">0</strong> ราย</div>
+        </div>
+        <div id="deptRows7"></div>
+        <button type="button" class="add-row-btn other" data-add-dept-select="deptRows7">+ เพิ่มแผนก</button>
+      </div>
+      <div class="subsection">
+        <div class="subsection-head other">
+          <div class="label-group"><span class="num">8</span><span class="label">ตรวจแล้วส่งพบแพทย์แผนกอื่น</span></div>
+          <div class="subsection-total">รวม <strong id="total_deptRows8">0</strong> ราย</div>
+        </div>
+        <div id="deptRows8"></div>
+        <button type="button" class="add-row-btn other" data-add-dept-select="deptRows8">+ เพิ่มแผนก</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="num">9</span><span class="title">เรียกไม่พบ</span></div>
+    <div class="card-body">
+      <div class="row-item">
+        <span class="label">จำนวนครั้งที่เรียกชื่อผู้ป่วยแล้วไม่พบ</span>
+        <input type="number" min="0" id="f_calledNotFound" value="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="title">คำติชม</span></div>
+    <div class="card-body">
+      <textarea id="f_feedback" placeholder="ข้อเสนอแนะ ปัญหาที่พบ หรือคำติชมเกี่ยวกับการให้บริการวันนี้"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><span class="title">หมายเหตุ / เหตุการณ์สำคัญ</span></div>
+    <div class="card-body">
+      <textarea id="f_notes" placeholder="เหตุการณ์สำคัญประจำวัน เช่น อุบัติเหตุหมู่ ระบบขัดข้อง เจ้าหน้าที่ขาด ฯลฯ"></textarea>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="saveBtn">บันทึกข้อมูลวันนี้</button>
+    <button class="btn btn-ghost" id="clearBtn">ล้างฟอร์ม</button>
+    <span class="save-status" id="saveStatus"></span>
+  </div>
+
+  <div class="section-title">กราฟแนวโน้มรายเดือน</div>
+  <div class="chart-card">
+    <div class="chart-legend" id="chartLegend"></div>
+    <div id="trendChartWrap"><div class="chart-empty" id="chartEmpty">ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</div></div>
+  </div>
+
+  <div class="section-title">สรุปข้อมูลย้อนหลัง</div>
+
+  <div class="summary-bar">
+    <div class="field">
+      <label for="sumFrom">จากวันที่</label>
+      <input type="date" id="sumFrom">
+    </div>
+    <div class="field">
+      <label for="sumTo">ถึงวันที่</label>
+      <input type="date" id="sumTo">
+    </div>
+    <button class="btn btn-ghost" id="exportBtn">ส่งออก CSV</button>
+  </div>
+
+  <div class="stat-grid" id="statGrid"></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left;">วันที่</th>
+          <th>รวมผู้ป่วย</th>
+          <th>สีเขียว</th>
+          <th>ผิดนัด/ผิดคลินิก</th>
+          <th>ซักประวัติ→ER</th>
+          <th>ตรวจ→ER</th>
+          <th>ทรุด→ER</th>
+          <th>รับจากแผนกอื่น</th>
+          <th>ซักประวัติ→แผนกอื่น</th>
+          <th>ตรวจ→แผนกอื่น</th>
+          <th>เรียกไม่พบ</th>
+          <th>หมายเหตุ</th>
+          <th>จัดการ</th>
+        </tr>
+      </thead>
+      <tbody id="recordsBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">ยังไม่มีข้อมูลบันทึก — เริ่มบันทึกข้อมูลวันนี้ได้ที่ฟอร์มด้านบน</div>
+  </div>
+
+  <p class="footnote">ไฟล์นี้เป็น HTML แบบสมบูรณ์ในตัวเอง — นำไปวางบนเว็บโฮสต์อื่นของโรงพยาบาลได้โดยไม่ต้องพึ่งพา claude.ai ข้อมูลจะถูกบันทึกไว้ใน<strong>เบราว์เซอร์ของเครื่อง/อุปกรณ์ที่กรอกข้อมูลเท่านั้น</strong> (ไม่ซิงก์ข้ามเครื่องหรือข้ามเจ้าหน้าที่แบบเรียลไทม์) ควรกด "ส่งออก CSV" เป็นระยะเพื่อสำรองข้อมูลไว้ หากต้องการให้ทุกเครื่อง/ทุกคนเห็นข้อมูลชุดเดียวกันแบบออนไลน์ ต้องมีระบบฐานข้อมูลกลางฝั่งเซิร์ฟเวอร์เพิ่มเติม</p>
+
+</div>
+
+<script>
+const NUMBER_FIELD_IDS = ['f_total','f_greenTriage','f_calledNotFound'];
+const DEPT_CONTAINERS_TEXT = [];
+const DEPT_CONTAINERS_SELECT = ['deptRows2','deptRows6','deptRows7','deptRows8'];
+const PATIENT_CONTAINERS = ['patRows3','patRows4','patRows5'];
+const DEPARTMENT_OPTIONS = [
+  'แผนกโรคเรื้อรัง','แผนกศัลยกรรมทั่วไป','แผนกหู คอ จมูก','แผนกตา','แผนกเด็ก',
+  'แผนกสูตินรีเวช','แผนกอายุรกรรม','แผนกกระดูก','แผนกระบบทางเดินปัสสาวะ','แผนกจิตเวช'
+];
+let rowCounter = 0;
+
+function todayStr(){
+  const d = new Date();
+  const off = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - off*60000);
+  return local.toISOString().slice(0,10);
+}
+function escapeAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function escapeHtml(s){ return escapeAttr(s); }
+
+function updateContainerTotal(containerId, isDept){
+  const rows = document.querySelectorAll('#'+containerId+' .row-el');
+  let total = 0;
+  if(isDept){
+    rows.forEach(r => { total += Number(r.querySelector('.dept-count').value) || 0; });
+  } else {
+    rows.forEach(r => {
+      const hn = r.querySelector('.hn').value.trim();
+      const dx = r.querySelector('.dx').value.trim();
+      if(hn || dx) total += 1;
+    });
+  }
+  const el = document.getElementById('total_'+containerId);
+  if(el) el.textContent = total;
+}
+
+function addDeptRow(containerId, name, count){
+  rowCounter++;
+  const wrap = document.createElement('div');
+  wrap.className = 'dept-row row-el';
+  wrap.innerHTML = `
+    <input type="text" placeholder="ชื่อแผนก" class="dept-name" value="${escapeAttr(name)}">
+    <input type="number" min="0" class="dept-count" placeholder="จำนวน" value="${count!=null?count:0}">
+    <button type="button" title="ลบแถวนี้">✕</button>
+  `;
+  wrap.querySelector('button').addEventListener('click', () => { wrap.remove(); updateContainerTotal(containerId, true); });
+  wrap.querySelector('.dept-count').addEventListener('input', () => updateContainerTotal(containerId, true));
+  document.getElementById(containerId).appendChild(wrap);
+  updateContainerTotal(containerId, true);
+}
+
+function addPatientRow(containerId, hn, dx){
+  rowCounter++;
+  const wrap = document.createElement('div');
+  wrap.className = 'patient-row row-el';
+  wrap.innerHTML = `
+    <input type="text" placeholder="HN" class="hn" value="${escapeAttr(hn)}">
+    <input type="text" placeholder="Dx" class="dx" value="${escapeAttr(dx)}">
+    <button type="button" title="ลบแถวนี้">✕</button>
+  `;
+  wrap.querySelector('button').addEventListener('click', () => { wrap.remove(); updateContainerTotal(containerId, false); });
+  wrap.querySelector('.hn').addEventListener('input', () => updateContainerTotal(containerId, false));
+  wrap.querySelector('.dx').addEventListener('input', () => updateContainerTotal(containerId, false));
+  document.getElementById(containerId).appendChild(wrap);
+  updateContainerTotal(containerId, false);
+}
+
+function getDeptData(containerId){
+  const rows = document.querySelectorAll('#'+containerId+' .row-el');
+  const out = [];
+  rows.forEach(r => {
+    const name = r.querySelector('.dept-name').value.trim();
+    const count = Number(r.querySelector('.dept-count').value) || 0;
+    if(name || count) out.push({dept:name, count});
+  });
+  return out;
+}
+
+function addDeptRowSelect(containerId, dept, count, note){
+  rowCounter++;
+  const wrap = document.createElement('div');
+  wrap.className = 'dept-row dept-row-adv row-el';
+  const isOther = dept && !DEPARTMENT_OPTIONS.includes(dept);
+  const optionsHtml = DEPARTMENT_OPTIONS.map(opt =>
+    `<option value="${escapeAttr(opt)}" ${opt===dept?'selected':''}>${escapeHtml(opt)}</option>`
+  ).join('');
+  wrap.innerHTML = `
+    <select class="dept-select">
+      <option value="">— เลือกแผนก —</option>
+      ${optionsHtml}
+      <option value="__other__" ${isOther?'selected':''}>อื่นๆ (ระบุ)</option>
+    </select>
+    <input type="text" class="dept-other" placeholder="ระบุแผนก" value="${isOther?escapeAttr(dept):''}" style="display:${isOther?'block':'none'};">
+    <input type="number" min="0" class="dept-count" placeholder="จำนวน" value="${count!=null?count:0}">
+    <input type="text" class="dept-note" placeholder="หมายเหตุ" value="${escapeAttr(note)}">
+    <button type="button" title="ลบแถวนี้">✕</button>
+  `;
+  const selectEl = wrap.querySelector('.dept-select');
+  const otherEl = wrap.querySelector('.dept-other');
+  selectEl.addEventListener('change', () => {
+    const showOther = selectEl.value === '__other__';
+    otherEl.style.display = showOther ? 'block' : 'none';
+    if(!showOther) otherEl.value = '';
+  });
+  wrap.querySelector('button').addEventListener('click', () => { wrap.remove(); updateContainerTotal(containerId, true); });
+  wrap.querySelector('.dept-count').addEventListener('input', () => updateContainerTotal(containerId, true));
+  document.getElementById(containerId).appendChild(wrap);
+  updateContainerTotal(containerId, true);
+}
+
+function getDeptDataSelect(containerId){
+  const rows = document.querySelectorAll('#'+containerId+' .row-el');
+  const out = [];
+  rows.forEach(r => {
+    const sel = r.querySelector('.dept-select').value;
+    const dept = sel === '__other__' ? r.querySelector('.dept-other').value.trim() : sel;
+    const count = Number(r.querySelector('.dept-count').value) || 0;
+    const note = r.querySelector('.dept-note').value.trim();
+    if(dept || count || note) out.push({dept, count, note});
+  });
+  return out;
+}
+function getPatientData(containerId){
+  const rows = document.querySelectorAll('#'+containerId+' .row-el');
+  const out = [];
+  rows.forEach(r => {
+    const hn = r.querySelector('.hn').value.trim();
+    const dx = r.querySelector('.dx').value.trim();
+    if(hn || dx) out.push({hn, dx});
+  });
+  return out;
+}
+
+function deptSum(list){ return (list||[]).reduce((s,d)=>s+(Number(d.count)||0),0); }
+function patCount(list){ return (list||[]).length; }
+
+function clearForm(keepDate){
+  NUMBER_FIELD_IDS.forEach(id => document.getElementById(id).value = 0);
+  document.getElementById('recShift').value = '';
+  document.getElementById('recBy').value = '';
+  document.getElementById('f_feedback').value = '';
+  document.getElementById('f_notes').value = '';
+  DEPT_CONTAINERS_TEXT.forEach(c => { document.getElementById(c).innerHTML=''; addDeptRow(c,'',0); });
+  DEPT_CONTAINERS_SELECT.forEach(c => { document.getElementById(c).innerHTML=''; addDeptRowSelect(c,'',0,''); });
+  PATIENT_CONTAINERS.forEach(c => { document.getElementById(c).innerHTML=''; addPatientRow(c,'',''); });
+  if(!keepDate) document.getElementById('recDate').value = todayStr();
+}
+
+function collectForm(){
+  const rec = { date: document.getElementById('recDate').value };
+  if(!rec.date) return null;
+  rec.shift = document.getElementById('recShift').value;
+  rec.recordedBy = document.getElementById('recBy').value.trim();
+  rec.total = Number(document.getElementById('f_total').value) || 0;
+  rec.greenTriage = Number(document.getElementById('f_greenTriage').value) || 0;
+  rec.calledNotFound = Number(document.getElementById('f_calledNotFound').value) || 0;
+  rec.feedback = document.getElementById('f_feedback').value.trim();
+  rec.notes = document.getElementById('f_notes').value.trim();
+  rec.wrongAppt = getDeptDataSelect('deptRows2');
+  rec.receivedFromOther = getDeptDataSelect('deptRows6');
+  rec.historyToOther = getDeptDataSelect('deptRows7');
+  rec.examToOtherDoctor = getDeptDataSelect('deptRows8');
+  rec.historyToER = getPatientData('patRows3');
+  rec.examToER = getPatientData('patRows4');
+  rec.deteriorateER = getPatientData('patRows5');
+  return rec;
+}
+
+function fillForm(rec){
+  document.getElementById('recDate').value = rec.date;
+  document.getElementById('recShift').value = rec.shift || '';
+  document.getElementById('recBy').value = rec.recordedBy || '';
+  document.getElementById('f_total').value = rec.total || 0;
+  document.getElementById('f_greenTriage').value = rec.greenTriage || 0;
+  document.getElementById('f_calledNotFound').value = rec.calledNotFound || 0;
+  document.getElementById('f_feedback').value = rec.feedback || '';
+  document.getElementById('f_notes').value = rec.notes || '';
+
+  const fillDept = (containerId, data) => {
+    document.getElementById(containerId).innerHTML = '';
+    const list = (data && data.length) ? data : [];
+    if(list.length === 0) addDeptRow(containerId,'',0);
+    else list.forEach(d => addDeptRow(containerId, d.dept, d.count));
+  };
+  const fillDeptSelect = (containerId, data) => {
+    document.getElementById(containerId).innerHTML = '';
+    const list = (data && data.length) ? data : [];
+    if(list.length === 0) addDeptRowSelect(containerId,'',0,'');
+    else list.forEach(d => addDeptRowSelect(containerId, d.dept, d.count, d.note));
+  };
+  const fillPatient = (containerId, data) => {
+    document.getElementById(containerId).innerHTML = '';
+    const list = (data && data.length) ? data : [];
+    if(list.length === 0) addPatientRow(containerId,'','');
+    else list.forEach(p => addPatientRow(containerId, p.hn, p.dx));
+  };
+  fillDeptSelect('deptRows2', rec.wrongAppt);
+  fillDeptSelect('deptRows6', rec.receivedFromOther);
+  fillDeptSelect('deptRows7', rec.historyToOther);
+  fillDeptSelect('deptRows8', rec.examToOtherDoctor);
+  fillPatient('patRows3', rec.historyToER);
+  fillPatient('patRows4', rec.examToER);
+  fillPatient('patRows5', rec.deteriorateER);
+}
+
+const STORAGE_PREFIX = 'opd-record:';
+
+async function initDb(){
+  // Standalone build: data is saved in this browser's localStorage,
+  // so it works on any web server without a backend.
+  if(typeof localStorage === 'undefined'){
+    const statusEl = document.getElementById('saveStatus');
+    statusEl.textContent = 'เบราว์เซอร์นี้ไม่รองรับการบันทึกข้อมูล';
+    statusEl.className = 'save-status';
+  }
+}
+
+async function saveRecord(){
+  const rec = collectForm();
+  const statusEl = document.getElementById('saveStatus');
+  if(!rec){ statusEl.textContent='กรุณาเลือกวันที่ก่อนบันทึก'; statusEl.className='save-status'; return; }
+  try{
+    localStorage.setItem(STORAGE_PREFIX + rec.date, JSON.stringify(rec));
+    statusEl.textContent = 'บันทึกแล้ว (' + rec.date + ')';
+    statusEl.className = 'save-status ok';
+    await refreshRecords();
+  }catch(err){
+    console.error('Save error:', err);
+    statusEl.textContent = 'เกิดข้อผิดพลาดในการบันทึก';
+    statusEl.className = 'save-status';
+  }
+}
+
+async function loadRecordForDate(date){
+  try{
+    const raw = localStorage.getItem(STORAGE_PREFIX + date);
+    if(raw){ fillForm(JSON.parse(raw)); return; }
+  }catch(e){ console.error('load error', e); }
+  clearForm(true);
+}
+
+async function fetchAllRecords(){
+  try{
+    const records = [];
+    for(let i = 0; i < localStorage.length; i++){
+      const key = localStorage.key(i);
+      if(key && key.indexOf(STORAGE_PREFIX) === 0){
+        try{ records.push(JSON.parse(localStorage.getItem(key))); }catch(e){}
+      }
+    }
+    return records.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  }catch(e){ console.error('fetch error', e); return []; }
+}
+
+async function deleteRecord(date){
+  if(!confirm('ลบข้อมูลวันที่ ' + date + ' ใช่หรือไม่?')) return;
+  try{
+    localStorage.removeItem(STORAGE_PREFIX + date);
+    await refreshRecords();
+    if(document.getElementById('recDate').value === date) clearForm(true);
+  }catch(e){ console.error('delete error', e); alert('ลบไม่สำเร็จ'); }
+}
+
+function erSumOf(r){ return patCount(r.historyToER)+patCount(r.examToER)+patCount(r.deteriorateER); }
+function otherDeptSumOf(r){ return deptSum(r.receivedFromOther)+deptSum(r.historyToOther)+deptSum(r.examToOtherDoctor); }
+
+function renderStats(records){
+  const grid = document.getElementById('statGrid');
+  const totals = records.reduce((acc,r) => {
+    acc.total += r.total||0;
+    acc.wrongAppt += deptSum(r.wrongAppt);
+    acc.er += erSumOf(r);
+    acc.receivedFromOther += deptSum(r.receivedFromOther);
+    acc.otherOut += deptSum(r.historyToOther)+deptSum(r.examToOtherDoctor);
+    acc.calledNotFound += r.calledNotFound||0;
+    return acc;
+  }, {total:0,wrongAppt:0,er:0,receivedFromOther:0,otherOut:0,calledNotFound:0});
+
+  const items = [
+    {n: totals.total, l: 'ผู้ป่วยรวม (' + records.length + ' วัน)', er:false},
+    {n: totals.wrongAppt, l: 'มาผิดนัด/ผิดคลินิก', er:false},
+    {n: totals.er, l: 'ส่งต่อ ER รวม', er:true},
+    {n: totals.receivedFromOther, l: 'รับส่งต่อจากแผนกอื่น', er:false},
+    {n: totals.otherOut, l: 'ส่งแผนกอื่นรวม', er:false},
+    {n: totals.calledNotFound, l: 'เรียกไม่พบ', er:false},
+  ];
+  grid.innerHTML = items.map(i => `<div class="stat${i.er?' er':''}"><div class="n">${i.n}</div><div class="l">${i.l}</div></div>`).join('');
+}
+
+function renderTable(records){
+  const body = document.getElementById('recordsBody');
+  const empty = document.getElementById('emptyState');
+  if(records.length === 0){ body.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  body.innerHTML = records.map(r => {
+    const noteCombined = [r.notes, r.feedback ? ('คำติชม: '+r.feedback) : ''].filter(Boolean).join(' | ');
+    return `
+    <tr>
+      <td class="date-cell">${r.date}${r.shift ? ' <span style="color:var(--ink-soft);font-weight:400;">('+r.shift+')</span>' : ''}</td>
+      <td class="tot-cell">${r.total||0}</td>
+      <td style="color:#2E7D32;font-weight:600;">${r.greenTriage||0}</td>
+      <td>${deptSum(r.wrongAppt)}</td>
+      <td>${patCount(r.historyToER)}</td>
+      <td>${patCount(r.examToER)}</td>
+      <td>${patCount(r.deteriorateER)}</td>
+      <td>${deptSum(r.receivedFromOther)}</td>
+      <td>${deptSum(r.historyToOther)}</td>
+      <td>${deptSum(r.examToOtherDoctor)}</td>
+      <td>${r.calledNotFound||0}</td>
+      <td class="note-cell" title="${escapeAttr(noteCombined)}">${escapeHtml(noteCombined) || '—'}</td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-btn" data-edit="${r.date}">แก้ไข</button>
+          <button class="icon-btn del" data-del="${r.date}">ลบ</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  body.querySelectorAll('[data-edit]').forEach(btn => btn.addEventListener('click', () => {
+    document.getElementById('recDate').value = btn.dataset.edit;
+    loadRecordForDate(btn.dataset.edit);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }));
+  body.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', () => deleteRecord(btn.dataset.del)));
+}
+
+let allRecordsCache = [];
+
+function applyDateFilter(){
+  const from = document.getElementById('sumFrom').value;
+  const to = document.getElementById('sumTo').value;
+  let filtered = allRecordsCache;
+  if(from) filtered = filtered.filter(r => r.date >= from);
+  if(to) filtered = filtered.filter(r => r.date <= to);
+  renderStats(filtered);
+  renderTable(filtered);
+}
+
+async function refreshRecords(){
+  allRecordsCache = await fetchAllRecords();
+  applyDateFilter();
+  renderTrendChart();
+}
+
+function exportCSV(){
+  const from = document.getElementById('sumFrom').value;
+  const to = document.getElementById('sumTo').value;
+  let rows = allRecordsCache;
+  if(from) rows = rows.filter(r => r.date >= from);
+  if(to) rows = rows.filter(r => r.date <= to);
+  if(rows.length === 0){ alert('ไม่มีข้อมูลในช่วงที่เลือก'); return; }
+
+  const header = ['วันที่','เวร','ผู้บันทึก','ยอดคนไข้ใช้บริการ','ยอดคนไข้สีเขียว','มาผิดนัดผิดคลินิก(รวม)','รายละเอียดแผนกที่ผิดนัด',
+    'ซักประวัติแล้วส่งER(รวม)','HN/Dx ซักประวัติ→ER','ตรวจแล้วส่งตรวจต่อER(รวม)','HN/Dx ตรวจ→ER','ทรุดลงส่งต่อER(รวม)','HN/Dx ทรุด→ER',
+    'รับส่งต่อจากแผนกอื่น(รวม)','รายละเอียด','ซักประวัติแล้วส่งแผนกอื่น(รวม)','รายละเอียด','ตรวจแล้วส่งพบแพทย์แผนกอื่น(รวม)','รายละเอียด',
+    'เรียกไม่พบ','คำติชม','หมายเหตุ/เหตุการณ์สำคัญ'];
+  const lines = [header.join(',')];
+  const deptDetailWithNote = list => (list||[]).map(d=>`${d.dept}:${d.count}${d.note?(' ('+d.note+')'):''}`).join(' / ');
+  const patDetail = list => (list||[]).map(p=>`${p.hn}-${p.dx}`).join(' / ');
+  const q = s => '"' + String(s||'').replace(/"/g,'""') + '"';
+
+  rows.forEach(r => {
+    const line = [
+      r.date, r.shift||'', r.recordedBy||'', r.total||0, r.greenTriage||0,
+      deptSum(r.wrongAppt), q(deptDetailWithNote(r.wrongAppt)),
+      patCount(r.historyToER), q(patDetail(r.historyToER)),
+      patCount(r.examToER), q(patDetail(r.examToER)),
+      patCount(r.deteriorateER), q(patDetail(r.deteriorateER)),
+      deptSum(r.receivedFromOther), q(deptDetailWithNote(r.receivedFromOther)),
+      deptSum(r.historyToOther), q(deptDetailWithNote(r.historyToOther)),
+      deptSum(r.examToOtherDoctor), q(deptDetailWithNote(r.examToOtherDoctor)),
+      r.calledNotFound||0, q(r.feedback), q(r.notes)
+    ];
+    lines.push(line.join(','));
+  });
+  const csv = '\uFEFF' + lines.join('\n');
+  const filename = 'opd-data-' + (from||'all') + '_to_' + (to||'all') + '.csv';
+  saveCsvFile(filename, csv);
+}
+
+async function saveCsvFile(filename, csv){
+  const statusEl = document.getElementById('saveStatus');
+  try{
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    statusEl.textContent = 'ดาวน์โหลดไฟล์ ' + filename + ' แล้ว';
+    statusEl.className = 'save-status ok';
+  }catch(err){
+    console.error('download error', err);
+    statusEl.textContent = 'บันทึกไฟล์ไม่สำเร็จ';
+    statusEl.className = 'save-status';
+  }
+}
+
+/* ---------- Monthly trend chart ---------- */
+const CHART_SERIES = [
+  {key:'total', label:'ผู้ป่วยรวม', color:'var(--teal)', hex:'#155048', on:true},
+  {key:'er', label:'ส่งต่อ ER รวม', color:'var(--danger)', hex:'#A83B2E', on:true},
+  {key:'wrongAppt', label:'มาผิดนัด/ผิดคลินิก', color:'var(--amber)', hex:'#B9772E', on:true},
+  {key:'otherDept', label:'ส่ง/รับแผนกอื่นรวม', color:'var(--blue)', hex:'#2E6DA8', on:false},
+  {key:'calledNotFound', label:'เรียกไม่พบ', color:'var(--grey)', hex:'#6B7A77', on:false},
+];
+
+function aggregateByMonth(records){
+  const map = {};
+  records.forEach(r => {
+    const month = (r.date||'').slice(0,7);
+    if(!month) return;
+    if(!map[month]) map[month] = {month, total:0, er:0, wrongAppt:0, otherDept:0, calledNotFound:0};
+    map[month].total += r.total||0;
+    map[month].er += erSumOf(r);
+    map[month].wrongAppt += deptSum(r.wrongAppt);
+    map[month].otherDept += otherDeptSumOf(r);
+    map[month].calledNotFound += r.calledNotFound||0;
+  });
+  return Object.values(map).sort((a,b) => a.month.localeCompare(b.month));
+}
+
+function monthLabel(m){
+  const [y,mo] = m.split('-');
+  const thMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  return thMonths[Number(mo)-1] + ' ' + (Number(y)+543).toString().slice(-2);
+}
+
+function renderChartLegend(){
+  const legend = document.getElementById('chartLegend');
+  legend.innerHTML = CHART_SERIES.map(s => `
+    <label class="legend-item ${s.on?'':'off'}" data-key="${s.key}">
+      <input type="checkbox" ${s.on?'checked':''} data-series="${s.key}">
+      <span class="swatch" style="background:${s.hex}"></span>${s.label}
+    </label>
+  `).join('');
+  legend.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const key = cb.dataset.series;
+      const series = CHART_SERIES.find(s => s.key === key);
+      series.on = cb.checked;
+      cb.closest('.legend-item').classList.toggle('off', !cb.checked);
+      renderTrendChart();
+    });
+  });
+}
+
+function renderTrendChart(){
+  const wrap = document.getElementById('trendChartWrap');
+  const monthly = aggregateByMonth(allRecordsCache);
+  if(monthly.length === 0){
+    wrap.innerHTML = '<div class="chart-empty">ยังไม่มีข้อมูลเพียงพอสำหรับแสดงกราฟ</div>';
+    return;
+  }
+  const active = CHART_SERIES.filter(s => s.on);
+  if(active.length === 0){
+    wrap.innerHTML = '<div class="chart-empty">เลือกอย่างน้อย 1 หัวข้อจากคำอธิบายด้านบนเพื่อแสดงกราฟ</div>';
+    return;
+  }
+
+  const W = Math.max(560, monthly.length*90);
+  const H = 320;
+  const padL = 46, padR = 20, padT = 20, padB = 44;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  let maxVal = 1;
+  monthly.forEach(m => active.forEach(s => { if(m[s.key] > maxVal) maxVal = m[s.key]; }));
+  maxVal = Math.ceil(maxVal * 1.15);
+
+  const xStep = monthly.length > 1 ? plotW/(monthly.length-1) : 0;
+  const xOf = i => padL + (monthly.length>1 ? i*xStep : plotW/2);
+  const yOf = v => padT + plotH - (v/maxVal)*plotH;
+
+  const gridLines = 4;
+  let gridSvg = '';
+  for(let g=0; g<=gridLines; g++){
+    const val = Math.round(maxVal * g/gridLines);
+    const y = yOf(val);
+    gridSvg += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#DEE3E0" stroke-width="1"/>`;
+    gridSvg += `<text x="${padL-8}" y="${y+4}" font-size="11" fill="#4B5C59" text-anchor="end">${val}</text>`;
+  }
+
+  let xLabelsSvg = '';
+  monthly.forEach((m,i) => {
+    xLabelsSvg += `<text x="${xOf(i)}" y="${H-padB+20}" font-size="11" fill="#4B5C59" text-anchor="middle">${monthLabel(m.month)}</text>`;
+  });
+
+  let seriesSvg = '';
+  active.forEach(s => {
+    const points = monthly.map((m,i) => `${xOf(i)},${yOf(m[s.key])}`).join(' ');
+    seriesSvg += `<polyline points="${points}" fill="none" stroke="${s.hex}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    monthly.forEach((m,i) => {
+      seriesSvg += `<circle cx="${xOf(i)}" cy="${yOf(m[s.key])}" r="3.5" fill="${s.hex}"><title>${monthLabel(m.month)}: ${m[s.key]}</title></circle>`;
+    });
+  });
+
+  const svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Sarabun, sans-serif">
+    ${gridSvg}
+    <line x1="${padL}" y1="${padT+plotH}" x2="${W-padR}" y2="${padT+plotH}" stroke="#4B5C59" stroke-width="1.2"/>
+    ${xLabelsSvg}
+    ${seriesSvg}
+  </svg>`;
+  wrap.innerHTML = svg;
+}
+
+async function init(){
+  document.getElementById('recDate').value = todayStr();
+  DEPT_CONTAINERS_TEXT.forEach(c => addDeptRow(c,'',0));
+  DEPT_CONTAINERS_SELECT.forEach(c => addDeptRowSelect(c,'',0,''));
+  PATIENT_CONTAINERS.forEach(c => addPatientRow(c,'',''));
+
+  document.querySelectorAll('[data-add-dept]').forEach(btn => btn.addEventListener('click', () => addDeptRow(btn.dataset.addDept,'',0)));
+  document.querySelectorAll('[data-add-dept-select]').forEach(btn => btn.addEventListener('click', () => addDeptRowSelect(btn.dataset.addDeptSelect,'',0,'')));
+  document.querySelectorAll('[data-add-patient]').forEach(btn => btn.addEventListener('click', () => addPatientRow(btn.dataset.addPatient,'','')));
+
+  document.getElementById('saveBtn').addEventListener('click', saveRecord);
+  document.getElementById('clearBtn').addEventListener('click', () => clearForm(false));
+  document.getElementById('exportBtn').addEventListener('click', exportCSV);
+  document.getElementById('recDate').addEventListener('change', (e) => loadRecordForDate(e.target.value));
+  document.getElementById('sumFrom').addEventListener('change', applyDateFilter);
+  document.getElementById('sumTo').addEventListener('change', applyDateFilter);
+
+  renderChartLegend();
+  await initDb();
+  await loadRecordForDate(todayStr());
+  await refreshRecords();
+}
+
+init();
+</script>
+</body>
+</html>
